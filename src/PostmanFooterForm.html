@@ -1,0 +1,106 @@
+<div class="wrapper">
+  <p>{{message}} </p>
+  <input ref:emailInputField class="inputField" bind:value='email' on:change='submit()' on:keyup='updateColor()' placeholder='you@email.com'>
+
+
+  <div class="submitButton" on:click='submit()'>subscribe</div>
+
+  <div class="quitButton" on:click='close()'>[X]</div>
+</div>
+
+
+<style>
+
+  input:focus {
+    outline:none;
+  }
+
+  .inputField {
+    border: 1px solid white;
+    border-radius: 0;
+    text-align: center;
+    width: 200px;
+  }
+
+  .wrapper {
+    position: fixed;
+    width: 100%;
+    height: 200px;
+    background-color: #88f;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+
+  .quitButton {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 20px;
+    height: 20px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    padding: 5px;
+    cursor: pointer;
+  }
+
+  .submitButton {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.5);
+    padding: 7px;
+    cursor: pointer;
+  }
+
+  .redBorder {
+    border: 1px solid red;
+  }
+
+</style>
+
+
+
+
+<script>
+  function validateEmail(email) {
+    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(email.toLowerCase());
+  }
+
+  export default {
+
+    data() {
+      return {
+        email: "",
+
+      }
+    },
+
+    computed: {
+     isEmailValid: function(email){
+        return validateEmail( email )
+      }
+
+   },
+
+    methods: {
+      closeCallback(){ console.warn("must be overloaded externally"); },
+      submitCallback(){ console.warn("must be overloaded externally"); },
+
+      updateColor(){
+        this.refs.emailInputField.style.border = this.get("isEmailValid") || (this.get("email") === '')  ? "1px solid white" : "1px solid red";
+      },
+
+      submit(){
+
+        this.submitCallback();
+        console.log('SUBMIT');
+      },
+
+      close() {
+        this.closeCallback();
+        //alert(message); // again, please don't do this
+        this.destroy();
+      }
+    }
+  };
+</script>
