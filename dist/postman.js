@@ -1,9 +1,9 @@
 var app = (function () {
 'use strict';
 
-var __dirname = '/Users/jonathanlurie/Documents/code/mess/postman/node_modules/htmlparser/lib'
+var __dirname = '/Users/jonathanlurie/Documents/code/github/postman/node_modules/htmlparser/lib'
 
-var __filename = '/Users/jonathanlurie/Documents/code/mess/postman/node_modules/htmlparser/lib/htmlparser.js'
+var __filename = '/Users/jonathanlurie/Documents/code/github/postman/node_modules/htmlparser/lib/htmlparser.js'
 
 function commonjsRequire () {
 	throw new Error('Dynamic requires are not currently supported by rollup-plugin-commonjs');
@@ -890,37 +890,37 @@ class DataManager {
     var feedUrl = document.currentScript.getAttribute("feed");
     that._scriptConfigData.feedUrl = feedUrl;
 
-    if( feedUrl ){
-
-      fetch( feedUrl )
-      .then(function(response) {
-        if( response.status > 200 ){
-          throw "Error status: " + response.status;
-          return;
-        }
-
-        return response.text();
-      }).then(function(rssXml) {
-
-        var handler = new htmlparser_3(function (error, rss) {
-          if( error ){
-            console.warn( error );
-            return;
-          }
-          if( "items" in rss && rss.items.length > 1){
-              that._scriptConfigData.feedUrl = feedUrl;
-          }
-          console.log( rss );
-        });
-
-        var parser = new htmlparser_1(handler);
-        parser.parseComplete(rssXml);
-
-      })
-      .catch( function(e){
-        console.log( e );
-      });
-    }
+    // if( feedUrl ){
+    //
+    //   fetch( feedUrl )
+    //   .then(function(response) {
+    //     if( response.status > 200 ){
+    //       throw "Error status: " + response.status;
+    //       return;
+    //     }
+    //
+    //     return response.text();
+    //   }).then(function(rssXml) {
+    //
+    //     var handler = new htmlparser.RssHandler(function (error, rss) {
+    //       if( error ){
+    //         console.warn( error );
+    //         return;
+    //       }
+    //       if( "items" in rss && rss.items.length > 1){
+    //           that._scriptConfigData.feedUrl = feedUrl;
+    //       }
+    //       console.log( rss );
+    //     });
+    //
+    //     var parser = new htmlparser.Parser(handler);
+    //     parser.parseComplete(rssXml);
+    //
+    //   })
+    //   .catch( function(e){
+    //     console.log( e );
+    //   });
+    // }
 
   }
 
@@ -987,10 +987,13 @@ class DataManager {
     window.localStorage.setItem("postman", JSON.stringify( this._localStorageData ));
   }
 
-  isRssValid(){
+  isFeedUrlValid(){
     return this._scriptConfigData.isValid;
   }
 
+  getFeedUrl(){
+    return this._scriptConfigData.feedUrl;
+  }
 
   shouldShowPostman(){
     return ( !this._localStorageData.subscribed || (new Date() - this._localStorageData.lastVisit > 86400000) )
@@ -1013,6 +1016,42 @@ class DataManager {
   close(){
     this.updateLastVisitDate();
   }
+
+}
+
+class ServerCom {
+  static post( baseUrl, route, data, cb ){
+
+
+    var url = baseUrl + route;
+    var status = null;
+
+    fetch(url,
+    {
+        method: "POST",
+        headers: {
+          'Accept': 'application/json, text/plain, */*',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify( data )
+    })
+    .then(function(res){
+      status = res.status;
+      if( status > 200 ){
+        throw "Server error, status " + status;
+        return;
+      }
+      return res.json();
+    })
+    .then(function(data){
+      cb( data );
+    })
+    .catch(function(e){
+      cb( {error: 1, message: e} );
+    });
+
+  }
+
 
 }
 
@@ -1282,14 +1321,26 @@ var methods = {
   closeCallback(){ console.warn("must be overloaded externally"); },
   submitCallback(){ console.warn("must be overloaded externally"); },
 
+  fieldKeyUp( evt ){
+    this.updateColor();
+
+    // Enter key
+    if( evt.keyCode === 13 ){
+      this.submit();
+    }
+
+  },
+
   updateColor(){
-    this.refs.emailInputField.style.border = this.get("isEmailValid") || (this.get("email") === '')  ? "1px solid white" : "1px solid red";
+    this.refs.emailInputField.style.border = this.get("isEmailValid") || (this.get("email") === '')  ? "1px solid #eee" : "1px solid #ffb06b";
+    //this.refs.emailInputField.style.backgroundColor = this.get("isEmailValid") || (this.get("email") === '')  ? "white" : "#FAA";
   },
 
   submit(){
+    if( this.get("isEmailValid") ){
+      this.submitCallback();
+    }
 
-    this.submitCallback();
-    console.log('SUBMIT');
   },
 
   close() {
@@ -1300,13 +1351,13 @@ var methods = {
 };
 
 function encapsulateStyles(node) {
-	setAttribute(node, "svelte-3790745658", "");
+	setAttribute(node, "svelte-2995772389", "");
 }
 
 function add_css() {
 	var style = createElement("style");
-	style.id = 'svelte-3790745658-style';
-	style.textContent = "input[svelte-3790745658]:focus{outline:none}.inputField[svelte-3790745658]{border:1px solid white;border-radius:0;text-align:center;width:200px}.wrapper[svelte-3790745658]{position:fixed;width:100%;height:200px;background-color:#88f;bottom:0;left:0;right:0}.quitButton[svelte-3790745658]{position:absolute;top:0;right:0;width:20px;height:20px;background:rgba(255, 255, 255, 0.5);border-radius:50%;padding:5px;cursor:pointer}.submitButton[svelte-3790745658]{display:inline-block;background:rgba(255, 255, 255, 0.5);padding:7px;cursor:pointer}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiUG9zdG1hbkZvb3RlckZvcm0uaHRtbCIsInNvdXJjZXMiOlsiUG9zdG1hbkZvb3RlckZvcm0uaHRtbCJdLCJzb3VyY2VzQ29udGVudCI6WyI8ZGl2IGNsYXNzPVwid3JhcHBlclwiPlxuICA8cD57e21lc3NhZ2V9fSA8L3A+XG4gIDxpbnB1dCByZWY6ZW1haWxJbnB1dEZpZWxkIGNsYXNzPVwiaW5wdXRGaWVsZFwiIGJpbmQ6dmFsdWU9J2VtYWlsJyBvbjpjaGFuZ2U9J3N1Ym1pdCgpJyBvbjprZXl1cD0ndXBkYXRlQ29sb3IoKScgcGxhY2Vob2xkZXI9J3lvdUBlbWFpbC5jb20nPlxuXG5cbiAgPGRpdiBjbGFzcz1cInN1Ym1pdEJ1dHRvblwiIG9uOmNsaWNrPSdzdWJtaXQoKSc+c3Vic2NyaWJlPC9kaXY+XG5cbiAgPGRpdiBjbGFzcz1cInF1aXRCdXR0b25cIiBvbjpjbGljaz0nY2xvc2UoKSc+W1hdPC9kaXY+XG48L2Rpdj5cblxuXG48c3R5bGU+XG5cbiAgaW5wdXQ6Zm9jdXMge1xuICAgIG91dGxpbmU6bm9uZTtcbiAgfVxuXG4gIC5pbnB1dEZpZWxkIHtcbiAgICBib3JkZXI6IDFweCBzb2xpZCB3aGl0ZTtcbiAgICBib3JkZXItcmFkaXVzOiAwO1xuICAgIHRleHQtYWxpZ246IGNlbnRlcjtcbiAgICB3aWR0aDogMjAwcHg7XG4gIH1cblxuICAud3JhcHBlciB7XG4gICAgcG9zaXRpb246IGZpeGVkO1xuICAgIHdpZHRoOiAxMDAlO1xuICAgIGhlaWdodDogMjAwcHg7XG4gICAgYmFja2dyb3VuZC1jb2xvcjogIzg4ZjtcbiAgICBib3R0b206IDA7XG4gICAgbGVmdDogMDtcbiAgICByaWdodDogMDtcbiAgfVxuXG4gIC5xdWl0QnV0dG9uIHtcbiAgICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gICAgdG9wOiAwO1xuICAgIHJpZ2h0OiAwO1xuICAgIHdpZHRoOiAyMHB4O1xuICAgIGhlaWdodDogMjBweDtcbiAgICBiYWNrZ3JvdW5kOiByZ2JhKDI1NSwgMjU1LCAyNTUsIDAuNSk7XG4gICAgYm9yZGVyLXJhZGl1czogNTAlO1xuICAgIHBhZGRpbmc6IDVweDtcbiAgICBjdXJzb3I6IHBvaW50ZXI7XG4gIH1cblxuICAuc3VibWl0QnV0dG9uIHtcbiAgICBkaXNwbGF5OiBpbmxpbmUtYmxvY2s7XG4gICAgYmFja2dyb3VuZDogcmdiYSgyNTUsIDI1NSwgMjU1LCAwLjUpO1xuICAgIHBhZGRpbmc6IDdweDtcbiAgICBjdXJzb3I6IHBvaW50ZXI7XG4gIH1cblxuICAucmVkQm9yZGVyIHtcbiAgICBib3JkZXI6IDFweCBzb2xpZCByZWQ7XG4gIH1cblxuPC9zdHlsZT5cblxuXG5cblxuPHNjcmlwdD5cbiAgZnVuY3Rpb24gdmFsaWRhdGVFbWFpbChlbWFpbCkge1xuICAgIHZhciByZSA9IC9eKChbXjw+KClcXFtcXF1cXFxcLiw7Olxcc0BcIl0rKFxcLltePD4oKVxcW1xcXVxcXFwuLDs6XFxzQFwiXSspKil8KFwiLitcIikpQCgoXFxbWzAtOV17MSwzfVxcLlswLTldezEsM31cXC5bMC05XXsxLDN9XFwuWzAtOV17MSwzfVxcXSl8KChbYS16QS1aXFwtMC05XStcXC4pK1thLXpBLVpdezIsfSkpJC87XG4gICAgcmV0dXJuIHJlLnRlc3QoZW1haWwudG9Mb3dlckNhc2UoKSk7XG4gIH1cblxuICBleHBvcnQgZGVmYXVsdCB7XG5cbiAgICBkYXRhKCkge1xuICAgICAgcmV0dXJuIHtcbiAgICAgICAgZW1haWw6IFwiXCIsXG5cbiAgICAgIH1cbiAgICB9LFxuXG4gICAgY29tcHV0ZWQ6IHtcbiAgICAgaXNFbWFpbFZhbGlkOiBmdW5jdGlvbihlbWFpbCl7XG4gICAgICAgIHJldHVybiB2YWxpZGF0ZUVtYWlsKCBlbWFpbCApXG4gICAgICB9XG5cbiAgIH0sXG5cbiAgICBtZXRob2RzOiB7XG4gICAgICBjbG9zZUNhbGxiYWNrKCl7IGNvbnNvbGUud2FybihcIm11c3QgYmUgb3ZlcmxvYWRlZCBleHRlcm5hbGx5XCIpOyB9LFxuICAgICAgc3VibWl0Q2FsbGJhY2soKXsgY29uc29sZS53YXJuKFwibXVzdCBiZSBvdmVybG9hZGVkIGV4dGVybmFsbHlcIik7IH0sXG5cbiAgICAgIHVwZGF0ZUNvbG9yKCl7XG4gICAgICAgIHRoaXMucmVmcy5lbWFpbElucHV0RmllbGQuc3R5bGUuYm9yZGVyID0gdGhpcy5nZXQoXCJpc0VtYWlsVmFsaWRcIikgfHwgKHRoaXMuZ2V0KFwiZW1haWxcIikgPT09ICcnKSAgPyBcIjFweCBzb2xpZCB3aGl0ZVwiIDogXCIxcHggc29saWQgcmVkXCI7XG4gICAgICB9LFxuXG4gICAgICBzdWJtaXQoKXtcblxuICAgICAgICB0aGlzLnN1Ym1pdENhbGxiYWNrKCk7XG4gICAgICAgIGNvbnNvbGUubG9nKCdTVUJNSVQnKTtcbiAgICAgIH0sXG5cbiAgICAgIGNsb3NlKCkge1xuICAgICAgICB0aGlzLmNsb3NlQ2FsbGJhY2soKTtcbiAgICAgICAgLy9hbGVydChtZXNzYWdlKTsgLy8gYWdhaW4sIHBsZWFzZSBkb24ndCBkbyB0aGlzXG4gICAgICAgIHRoaXMuZGVzdHJveSgpO1xuICAgICAgfVxuICAgIH1cbiAgfTtcbjwvc2NyaXB0PlxuIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQWFFLHdCQUFLLE1BQU0sQUFBQyxDQUFDLEFBQ1gsUUFBUSxJQUFJLEFBQ2QsQ0FBQyxBQUVELFdBQVcsbUJBQUMsQ0FBQyxBQUNYLE1BQU0sQ0FBRSxHQUFHLENBQUMsS0FBSyxDQUFDLEtBQUssQ0FDdkIsYUFBYSxDQUFFLENBQUMsQ0FDaEIsVUFBVSxDQUFFLE1BQU0sQ0FDbEIsS0FBSyxDQUFFLEtBQUssQUFDZCxDQUFDLEFBRUQsUUFBUSxtQkFBQyxDQUFDLEFBQ1IsUUFBUSxDQUFFLEtBQUssQ0FDZixLQUFLLENBQUUsSUFBSSxDQUNYLE1BQU0sQ0FBRSxLQUFLLENBQ2IsZ0JBQWdCLENBQUUsSUFBSSxDQUN0QixNQUFNLENBQUUsQ0FBQyxDQUNULElBQUksQ0FBRSxDQUFDLENBQ1AsS0FBSyxDQUFFLENBQUMsQUFDVixDQUFDLEFBRUQsV0FBVyxtQkFBQyxDQUFDLEFBQ1gsUUFBUSxDQUFFLFFBQVEsQ0FDbEIsR0FBRyxDQUFFLENBQUMsQ0FDTixLQUFLLENBQUUsQ0FBQyxDQUNSLEtBQUssQ0FBRSxJQUFJLENBQ1gsTUFBTSxDQUFFLElBQUksQ0FDWixVQUFVLENBQUUsS0FBSyxHQUFHLENBQUMsQ0FBQyxHQUFHLENBQUMsQ0FBQyxHQUFHLENBQUMsQ0FBQyxHQUFHLENBQUMsQ0FDcEMsYUFBYSxDQUFFLEdBQUcsQ0FDbEIsT0FBTyxDQUFFLEdBQUcsQ0FDWixNQUFNLENBQUUsT0FBTyxBQUNqQixDQUFDLEFBRUQsYUFBYSxtQkFBQyxDQUFDLEFBQ2IsT0FBTyxDQUFFLFlBQVksQ0FDckIsVUFBVSxDQUFFLEtBQUssR0FBRyxDQUFDLENBQUMsR0FBRyxDQUFDLENBQUMsR0FBRyxDQUFDLENBQUMsR0FBRyxDQUFDLENBQ3BDLE9BQU8sQ0FBRSxHQUFHLENBQ1osTUFBTSxDQUFFLE9BQU8sQUFDakIsQ0FBQyJ9 */";
+	style.id = 'svelte-2995772389-style';
+	style.textContent = ".inputField[svelte-2995772389]{border-radius:0;text-align:center;width:200px;border:1px solid #EEE;font-size:1em;height:2em;background-color:white}.inputField[svelte-2995772389]:focus{outline:none}.wrapper[svelte-2995772389]{font-family:-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Oxygen-Sans, Ubuntu, Cantarell, \"Helvetica Neue\", sans-serif;position:fixed;width:100%;height:200px;background-color:#fff;bottom:0;left:0;right:0}.quitButton[svelte-2995772389]{position:absolute;top:0;right:0;width:20px;height:20px;background:rgba(255, 255, 255, 0.5);border-radius:50%;padding:5px;cursor:pointer}.submitButton[svelte-2995772389]{display:inline-block;background:rgb(104, 204, 247);color:white;padding:7px;cursor:pointer;transition:all 0.2s}.submitButton[svelte-2995772389]:hover{background:rgb(69, 169, 212)}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiUG9zdG1hbkZvb3RlckZvcm0uaHRtbCIsInNvdXJjZXMiOlsiUG9zdG1hbkZvb3RlckZvcm0uaHRtbCJdLCJzb3VyY2VzQ29udGVudCI6WyI8ZGl2IGNsYXNzPVwid3JhcHBlclwiPlxuICA8cD57e21lc3NhZ2V9fSA8L3A+XG4gIDxpbnB1dCByZWY6ZW1haWxJbnB1dEZpZWxkIGNsYXNzPVwiaW5wdXRGaWVsZFwiIGJpbmQ6dmFsdWU9J2VtYWlsJyBvbjprZXl1cD0nZmllbGRLZXlVcChldmVudCknIHBsYWNlaG9sZGVyPSd5b3VAZW1haWwuY29tJz5cblxuXG4gIDxkaXYgY2xhc3M9XCJzdWJtaXRCdXR0b25cIiBvbjpjbGljaz0nc3VibWl0KCknPnN1YnNjcmliZTwvZGl2PlxuXG4gIDxkaXYgY2xhc3M9XCJxdWl0QnV0dG9uXCIgb246Y2xpY2s9J2Nsb3NlKCknPltYXTwvZGl2PlxuPC9kaXY+XG5cblxuPHN0eWxlPlxuXG5cblxuICAuaW5wdXRGaWVsZCB7XG4gICAgYm9yZGVyLXJhZGl1czogMDtcbiAgICB0ZXh0LWFsaWduOiBjZW50ZXI7XG4gICAgd2lkdGg6IDIwMHB4O1xuICAgIGJvcmRlcjogMXB4IHNvbGlkICNFRUU7XG4gICAgZm9udC1zaXplOiAxZW07XG4gICAgaGVpZ2h0OiAyZW07XG4gICAgYmFja2dyb3VuZC1jb2xvcjogd2hpdGU7XG4gIH1cblxuICAuaW5wdXRGaWVsZDpmb2N1cyB7XG4gICAgb3V0bGluZTpub25lO1xuICB9XG5cbiAgLndyYXBwZXIge1xuICAgIGZvbnQtZmFtaWx5OiAtYXBwbGUtc3lzdGVtLCBCbGlua01hY1N5c3RlbUZvbnQsIFwiU2Vnb2UgVUlcIiwgUm9ib3RvLCBPeHlnZW4tU2FucywgVWJ1bnR1LCBDYW50YXJlbGwsIFwiSGVsdmV0aWNhIE5ldWVcIiwgc2Fucy1zZXJpZjtcbiAgICBwb3NpdGlvbjogZml4ZWQ7XG4gICAgd2lkdGg6IDEwMCU7XG4gICAgaGVpZ2h0OiAyMDBweDtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiAjZmZmO1xuICAgIGJvdHRvbTogMDtcbiAgICBsZWZ0OiAwO1xuICAgIHJpZ2h0OiAwO1xuICB9XG5cbiAgLnF1aXRCdXR0b24ge1xuICAgIHBvc2l0aW9uOiBhYnNvbHV0ZTtcbiAgICB0b3A6IDA7XG4gICAgcmlnaHQ6IDA7XG4gICAgd2lkdGg6IDIwcHg7XG4gICAgaGVpZ2h0OiAyMHB4O1xuICAgIGJhY2tncm91bmQ6IHJnYmEoMjU1LCAyNTUsIDI1NSwgMC41KTtcbiAgICBib3JkZXItcmFkaXVzOiA1MCU7XG4gICAgcGFkZGluZzogNXB4O1xuICAgIGN1cnNvcjogcG9pbnRlcjtcbiAgfVxuXG4gIC5zdWJtaXRCdXR0b24ge1xuICAgIGRpc3BsYXk6IGlubGluZS1ibG9jaztcbiAgICBiYWNrZ3JvdW5kOiByZ2IoMTA0LCAyMDQsIDI0Nyk7XG4gICAgY29sb3I6IHdoaXRlO1xuICAgIHBhZGRpbmc6IDdweDtcbiAgICBjdXJzb3I6IHBvaW50ZXI7XG4gICAgdHJhbnNpdGlvbjogYWxsIDAuMnM7XG4gIH1cblxuICAuc3VibWl0QnV0dG9uOmhvdmVyIHtcbiAgICBiYWNrZ3JvdW5kOiByZ2IoNjksIDE2OSwgMjEyKTtcbiAgfVxuXG48L3N0eWxlPlxuXG5cblxuXG48c2NyaXB0PlxuICBmdW5jdGlvbiB2YWxpZGF0ZUVtYWlsKGVtYWlsKSB7XG4gICAgdmFyIHJlID0gL14oKFtePD4oKVxcW1xcXVxcXFwuLDs6XFxzQFwiXSsoXFwuW148PigpXFxbXFxdXFxcXC4sOzpcXHNAXCJdKykqKXwoXCIuK1wiKSlAKChcXFtbMC05XXsxLDN9XFwuWzAtOV17MSwzfVxcLlswLTldezEsM31cXC5bMC05XXsxLDN9XFxdKXwoKFthLXpBLVpcXC0wLTldK1xcLikrW2EtekEtWl17Mix9KSkkLztcbiAgICByZXR1cm4gcmUudGVzdChlbWFpbC50b0xvd2VyQ2FzZSgpKTtcbiAgfVxuXG4gIGV4cG9ydCBkZWZhdWx0IHtcblxuICAgIGRhdGEoKSB7XG4gICAgICByZXR1cm4ge1xuICAgICAgICBlbWFpbDogXCJcIixcblxuICAgICAgfVxuICAgIH0sXG5cbiAgICBjb21wdXRlZDoge1xuICAgICBpc0VtYWlsVmFsaWQ6IGZ1bmN0aW9uKGVtYWlsKXtcbiAgICAgICAgcmV0dXJuIHZhbGlkYXRlRW1haWwoIGVtYWlsIClcbiAgICAgIH1cblxuICAgfSxcblxuICAgIG1ldGhvZHM6IHtcbiAgICAgIGNsb3NlQ2FsbGJhY2soKXsgY29uc29sZS53YXJuKFwibXVzdCBiZSBvdmVybG9hZGVkIGV4dGVybmFsbHlcIik7IH0sXG4gICAgICBzdWJtaXRDYWxsYmFjaygpeyBjb25zb2xlLndhcm4oXCJtdXN0IGJlIG92ZXJsb2FkZWQgZXh0ZXJuYWxseVwiKTsgfSxcblxuICAgICAgZmllbGRLZXlVcCggZXZ0ICl7XG4gICAgICAgIHRoaXMudXBkYXRlQ29sb3IoKTtcblxuICAgICAgICAvLyBFbnRlciBrZXlcbiAgICAgICAgaWYoIGV2dC5rZXlDb2RlID09PSAxMyApe1xuICAgICAgICAgIHRoaXMuc3VibWl0KClcbiAgICAgICAgfVxuXG4gICAgICB9LFxuXG4gICAgICB1cGRhdGVDb2xvcigpe1xuICAgICAgICB0aGlzLnJlZnMuZW1haWxJbnB1dEZpZWxkLnN0eWxlLmJvcmRlciA9IHRoaXMuZ2V0KFwiaXNFbWFpbFZhbGlkXCIpIHx8ICh0aGlzLmdldChcImVtYWlsXCIpID09PSAnJykgID8gXCIxcHggc29saWQgI2VlZVwiIDogXCIxcHggc29saWQgI2ZmYjA2YlwiO1xuICAgICAgICAvL3RoaXMucmVmcy5lbWFpbElucHV0RmllbGQuc3R5bGUuYmFja2dyb3VuZENvbG9yID0gdGhpcy5nZXQoXCJpc0VtYWlsVmFsaWRcIikgfHwgKHRoaXMuZ2V0KFwiZW1haWxcIikgPT09ICcnKSAgPyBcIndoaXRlXCIgOiBcIiNGQUFcIjtcbiAgICAgIH0sXG5cbiAgICAgIHN1Ym1pdCgpe1xuICAgICAgICBpZiggdGhpcy5nZXQoXCJpc0VtYWlsVmFsaWRcIikgKXtcbiAgICAgICAgICB0aGlzLnN1Ym1pdENhbGxiYWNrKCk7XG4gICAgICAgIH1cblxuICAgICAgfSxcblxuICAgICAgY2xvc2UoKSB7XG4gICAgICAgIHRoaXMuY2xvc2VDYWxsYmFjaygpO1xuICAgICAgICAvL2FsZXJ0KG1lc3NhZ2UpOyAvLyBhZ2FpbiwgcGxlYXNlIGRvbid0IGRvIHRoaXNcbiAgICAgICAgdGhpcy5kZXN0cm95KCk7XG4gICAgICB9XG4gICAgfVxuICB9O1xuPC9zY3JpcHQ+XG4iXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBZUUsV0FBVyxtQkFBQyxDQUFDLEFBQ1gsYUFBYSxDQUFFLENBQUMsQ0FDaEIsVUFBVSxDQUFFLE1BQU0sQ0FDbEIsS0FBSyxDQUFFLEtBQUssQ0FDWixNQUFNLENBQUUsR0FBRyxDQUFDLEtBQUssQ0FBQyxJQUFJLENBQ3RCLFNBQVMsQ0FBRSxHQUFHLENBQ2QsTUFBTSxDQUFFLEdBQUcsQ0FDWCxnQkFBZ0IsQ0FBRSxLQUFLLEFBQ3pCLENBQUMsQUFFRCw4QkFBVyxNQUFNLEFBQUMsQ0FBQyxBQUNqQixRQUFRLElBQUksQUFDZCxDQUFDLEFBRUQsUUFBUSxtQkFBQyxDQUFDLEFBQ1IsV0FBVyxDQUFFLGFBQWEsQ0FBQyxDQUFDLGtCQUFrQixDQUFDLENBQUMsVUFBVSxDQUFDLENBQUMsTUFBTSxDQUFDLENBQUMsV0FBVyxDQUFDLENBQUMsTUFBTSxDQUFDLENBQUMsU0FBUyxDQUFDLENBQUMsZ0JBQWdCLENBQUMsQ0FBQyxVQUFVLENBQ2hJLFFBQVEsQ0FBRSxLQUFLLENBQ2YsS0FBSyxDQUFFLElBQUksQ0FDWCxNQUFNLENBQUUsS0FBSyxDQUNiLGdCQUFnQixDQUFFLElBQUksQ0FDdEIsTUFBTSxDQUFFLENBQUMsQ0FDVCxJQUFJLENBQUUsQ0FBQyxDQUNQLEtBQUssQ0FBRSxDQUFDLEFBQ1YsQ0FBQyxBQUVELFdBQVcsbUJBQUMsQ0FBQyxBQUNYLFFBQVEsQ0FBRSxRQUFRLENBQ2xCLEdBQUcsQ0FBRSxDQUFDLENBQ04sS0FBSyxDQUFFLENBQUMsQ0FDUixLQUFLLENBQUUsSUFBSSxDQUNYLE1BQU0sQ0FBRSxJQUFJLENBQ1osVUFBVSxDQUFFLEtBQUssR0FBRyxDQUFDLENBQUMsR0FBRyxDQUFDLENBQUMsR0FBRyxDQUFDLENBQUMsR0FBRyxDQUFDLENBQ3BDLGFBQWEsQ0FBRSxHQUFHLENBQ2xCLE9BQU8sQ0FBRSxHQUFHLENBQ1osTUFBTSxDQUFFLE9BQU8sQUFDakIsQ0FBQyxBQUVELGFBQWEsbUJBQUMsQ0FBQyxBQUNiLE9BQU8sQ0FBRSxZQUFZLENBQ3JCLFVBQVUsQ0FBRSxJQUFJLEdBQUcsQ0FBQyxDQUFDLEdBQUcsQ0FBQyxDQUFDLEdBQUcsQ0FBQyxDQUM5QixLQUFLLENBQUUsS0FBSyxDQUNaLE9BQU8sQ0FBRSxHQUFHLENBQ1osTUFBTSxDQUFFLE9BQU8sQ0FDZixVQUFVLENBQUUsR0FBRyxDQUFDLElBQUksQUFDdEIsQ0FBQyxBQUVELGdDQUFhLE1BQU0sQUFBQyxDQUFDLEFBQ25CLFVBQVUsQ0FBRSxJQUFJLEVBQUUsQ0FBQyxDQUFDLEdBQUcsQ0FBQyxDQUFDLEdBQUcsQ0FBQyxBQUMvQixDQUFDIn0= */";
 	appendNode(style, document.head);
 }
 
@@ -1319,12 +1370,8 @@ function create_main_fragment(state, component) {
 		input_updating = false;
 	}
 
-	function change_handler(event) {
-		component.submit();
-	}
-
 	function keyup_handler(event) {
-		component.updateColor();
+		component.fieldKeyUp(event);
 	}
 
 	function click_handler(event) {
@@ -1357,7 +1404,6 @@ function create_main_fragment(state, component) {
 			addListener(input, "input", input_input_handler);
 			input.className = "inputField";
 			input.placeholder = "you@email.com";
-			addListener(input, "change", change_handler);
 			addListener(input, "keyup", keyup_handler);
 			encapsulateStyles(div_1);
 			div_1.className = "submitButton";
@@ -1398,7 +1444,6 @@ function create_main_fragment(state, component) {
 
 		d: function destroy$$1() {
 			removeListener(input, "input", input_input_handler);
-			removeListener(input, "change", change_handler);
 			removeListener(input, "keyup", keyup_handler);
 			if (component.refs.emailInputField === input) component.refs.emailInputField = null;
 			removeListener(div_1, "click", click_handler);
@@ -1417,7 +1462,7 @@ function PostmanFooterForm(options) {
 	if (!('email' in this._state)) console.warn("<PostmanFooterForm> was created without expected data property 'email'");
 	if (!('message' in this._state)) console.warn("<PostmanFooterForm> was created without expected data property 'message'");
 
-	if (!document.getElementById("svelte-3790745658-style")) add_css();
+	if (!document.getElementById("svelte-2995772389-style")) add_css();
 
 	this._fragment = create_main_fragment(this._state, this);
 
@@ -1440,6 +1485,7 @@ PostmanFooterForm.prototype._recompute = function _recompute(changed, state) {
 	}
 };
 
+const SERVER_URL = "https://wt-3d8e69c28886f9c9f7ed6ba6797d805b-0.run.webtask.io/postman";
 var postmanForm = null;
 var dataManager = null;
 
@@ -1450,6 +1496,10 @@ function init(){
    if( !dataManager.shouldShowPostman() )
     return;
 
+  var feedUrl = dataManager.getFeedUrl();
+
+  if( !feedUrl )
+   return;
 
   postmanForm = new PostmanFooterForm({
     target: document.body,
@@ -1462,6 +1512,29 @@ function init(){
   postmanForm.closeCallback = function(){
     var email = postmanForm.get("email");
     console.log("email: " + email);
+  };
+
+  postmanForm.submitCallback = function(){
+    var email = postmanForm.get("email");
+
+    ServerCom.post(
+      SERVER_URL,     // url
+      "/subscribe",   // route
+      {               // data
+        email: email,
+        feedUrl: feedUrl
+      },
+      function( res ){
+        if( res.error ){
+          console.warn( res.message );
+          return;
+        }
+
+        console.log( res );
+
+      }
+    );
+
   };
 }
 

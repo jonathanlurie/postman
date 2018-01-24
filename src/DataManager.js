@@ -43,37 +43,37 @@ class DataManager {
     var feedUrl = document.currentScript.getAttribute("feed");
     that._scriptConfigData.feedUrl = feedUrl;
 
-    if( feedUrl ){
-
-      fetch( feedUrl )
-      .then(function(response) {
-        if( response.status > 200 ){
-          throw "Error status: " + response.status;
-          return;
-        }
-
-        return response.text();
-      }).then(function(rssXml) {
-
-        var handler = new htmlparser.RssHandler(function (error, rss) {
-          if( error ){
-            console.warn( error );
-            return;
-          }
-          if( "items" in rss && rss.items.length > 1){
-              that._scriptConfigData.feedUrl = feedUrl;
-          }
-          console.log( rss );
-        });
-
-        var parser = new htmlparser.Parser(handler);
-        parser.parseComplete(rssXml);
-
-      })
-      .catch( function(e){
-        console.log( e );
-      });
-    }
+    // if( feedUrl ){
+    //
+    //   fetch( feedUrl )
+    //   .then(function(response) {
+    //     if( response.status > 200 ){
+    //       throw "Error status: " + response.status;
+    //       return;
+    //     }
+    //
+    //     return response.text();
+    //   }).then(function(rssXml) {
+    //
+    //     var handler = new htmlparser.RssHandler(function (error, rss) {
+    //       if( error ){
+    //         console.warn( error );
+    //         return;
+    //       }
+    //       if( "items" in rss && rss.items.length > 1){
+    //           that._scriptConfigData.feedUrl = feedUrl;
+    //       }
+    //       console.log( rss );
+    //     });
+    //
+    //     var parser = new htmlparser.Parser(handler);
+    //     parser.parseComplete(rssXml);
+    //
+    //   })
+    //   .catch( function(e){
+    //     console.log( e );
+    //   });
+    // }
 
   }
 
@@ -140,10 +140,13 @@ class DataManager {
     window.localStorage.setItem("postman", JSON.stringify( this._localStorageData ))
   }
 
-  isRssValid(){
+  isFeedUrlValid(){
     return this._scriptConfigData.isValid;
   }
 
+  getFeedUrl(){
+    return this._scriptConfigData.feedUrl;
+  }
 
   shouldShowPostman(){
     return ( !this._localStorageData.subscribed || (new Date() - this._localStorageData.lastVisit > 86400000) )
