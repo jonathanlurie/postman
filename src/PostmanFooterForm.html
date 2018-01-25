@@ -4,6 +4,7 @@
 
 
   <div class="submitButton" on:click='submit()'>subscribe</div>
+  <img src="{{logo}}" width="200"/>
 
   <div class="quitButton" on:click='close()'>[X]</div>
 </div>
@@ -69,6 +70,9 @@
 
 
 <script>
+
+  import { Images } from './Images.js';
+
   function validateEmail(email) {
     var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(email.toLowerCase());
@@ -79,7 +83,7 @@
     data() {
       return {
         email: "",
-
+        logo: Images.postmanLogo
       }
     },
 
@@ -110,6 +114,7 @@
       },
 
       submit(){
+        console.log( this.get("logo") );
         if( this.get("isEmailValid") ){
           this.submitCallback();
         }
