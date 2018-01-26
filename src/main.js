@@ -21,7 +21,7 @@ function init(){
   postmanForm = new PostmanFooterForm({
     target: document.body,
     data: {
-      message: "Hello, subscribe!"
+      message: ''//"Hello, subscribe!"
     }
   });
 
@@ -44,9 +44,10 @@ function init(){
       function( res ){
         if( res.error ){
           console.warn( res.message );
+          postmanForm.set({"error": "ERROR: " + res.message})
           return;
         }
-
+        postmanForm.set({"error": ""})
         console.log( res );
 
       }
@@ -54,6 +55,7 @@ function init(){
 
   }
 }
+
 
 
 

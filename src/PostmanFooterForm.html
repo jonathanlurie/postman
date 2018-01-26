@@ -1,27 +1,52 @@
-<div class="wrapper">
-  <p>{{message}} </p>
-  <input ref:emailInputField class="inputField" bind:value='email' on:keyup='fieldKeyUp(event)' placeholder='you@email.com'>
+<div transition:slide='{duration: 500, delay:1500}' class="wrapper">
+  <div class="gradient"></div>
 
+  <div class="centeredText">
+    <p class="message">{{message}} </p>
+    <p class="error">{{error}} </p>
 
-  <div class="submitButton" on:click='submit()'>subscribe</div>
-  <img src="{{logo}}" width="200"/>
-
-  <div class="quitButton" on:click='close()'>[X]</div>
+    <div class="form">
+      <input ref:emailInputField class="inputField" bind:value='email' on:keyup='fieldKeyUp(event)' placeholder='{{ placeholder }}' onfocus="this.placeholder=''" onblur="this.placeholder = '{{ placeholder }}'">
+      <div class="submitButton" on:click='submit()'>subscribe</div>
+    </div>
+    <hr class="separator" />
+    <div class="logoDiv">
+      <a href="https://github.com/jonathanlurie/postman" target="_blank">
+        <img src="{{logo}}" alt="[The Postman]"/>
+      </a>
+    </div>
+  </div>
+  <div class="quitButton" on:click='close()'><img src="{{cross}}" alt="[close]" style="width: 100%"/></div>
 </div>
 
 
 <style>
+  .message {
+    margin: 12px 0 0 0;
+  }
 
+  .error {
+    color: #F66;
+  }
 
+  .centeredText {
+    text-align: center;
+  }
+
+  .separator {
+    border: 0.5px dashed #27272730;
+    width: 50px;
+  }
 
   .inputField {
     border-radius: 0;
     text-align: center;
-    width: 200px;
+    width: 300px;
     border: 1px solid #EEE;
     font-size: 1em;
     height: 2em;
     background-color: white;
+    margin-right: 0.1em;
   }
 
   .inputField:focus {
@@ -29,26 +54,29 @@
   }
 
   .wrapper {
+    z-index: 2147483647;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
     position: fixed;
     width: 100%;
-    height: 200px;
     background-color: #fff;
     bottom: 0;
     left: 0;
     right: 0;
+    transition: all 0.2s;
   }
 
   .quitButton {
     position: absolute;
     top: 0;
     right: 0;
-    width: 20px;
-    height: 20px;
-    background: rgba(255, 255, 255, 0.5);
-    border-radius: 50%;
-    padding: 5px;
+    width: 15px;
+    padding: 8px;
     cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .quitButton:hover {
+    opacity: 0.3;
   }
 
   .submitButton {
@@ -60,8 +88,37 @@
     transition: all 0.2s;
   }
 
+  .logoDiv {
+    display: inline-block;
+    width: 125px;
+    margin-bottom: 8px;
+    transition: all 0.2s;
+  }
+
+  .logoDiv:hover {
+    opacity: 0.5;
+  }
+
+  .logoDiv img {
+    width: 100%;
+  }
+
   .submitButton:hover {
     background: rgb(69, 169, 212);
+  }
+
+  .form {
+    margin-top: 10px;
+  }
+
+  .gradient {
+    width: 100%;
+    height: 2px;
+
+    background-image: -webkit-linear-gradient(left, #FF0099 0%, #FFA600 100%);
+    background-image: -moz-linear-gradient(left, #FF0099 0%, #FFA600 100%);
+    background-image: -o-linear-gradient(left, #FF0099 0%, #FFA600 100%);
+    background-image: linear-gradient(to right, #FF0099 0%, #FFA600 100%);
   }
 
 </style>
@@ -70,7 +127,7 @@
 
 
 <script>
-
+  import slide from 'svelte-transitions-slide';
   import { Images } from './Images.js';
 
   function validateEmail(email) {
@@ -83,7 +140,11 @@
     data() {
       return {
         email: "",
-        logo: Images.postmanLogo
+        placeholder: "you@email.com",
+        logo: Images.postmanLogo,
+        cross: Images.cross,
+        message: '',
+        error: ''
       }
     },
 
@@ -114,10 +175,10 @@
       },
 
       submit(){
-        console.log( this.get("logo") );
         if( this.get("isEmailValid") ){
           this.submitCallback();
         }
+
 
       },
 
@@ -126,6 +187,8 @@
         //alert(message); // again, please don't do this
         this.destroy();
       }
-    }
+    },
+
+    transitions: { slide },
   };
 </script>

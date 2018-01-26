@@ -21,6 +21,7 @@
     "htmlparser": "^1.7.7",
     "rollup-plugin-node-builtins": "^2.1.2",
     "rollup-plugin-node-globals": "^1.1.0",
+    "svelte-transitions-slide": "^1.0.0",
     "xmldom": "^0.1.27"
   }
 }
