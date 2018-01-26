@@ -1,0 +1,92 @@
+{
+  // a list of feeds that are allowed on server side.
+  "allowedFeeds": [
+    "http://site1.com/feed.xml",
+    "http://site2.fr/feed.xml"
+  ],
+
+
+  // Information per feed, where feed URL are primary keys.
+  // used to compare the last articles in the record Vs. the last article actually published
+  "feedData": {
+    "http://site1.com/feed.xml": {
+      "lastArticleTitle": "The Title",
+      "lastArticlePuplicationDate": "2017-12-31T01:01:45.095Z"
+    },
+
+    "http://site2.com/feed.xml": {
+      "lastArticleTitle": "The Other Title",
+      "lastArticlePuplicationDate": "2017-12-31T02:27:07.000Z"
+    }
+  },
+
+
+  // index where primary key is the URL of the feed and
+  // data is a list of subscribed users
+  "subscribersPerFeed": {
+    "http://site1.com/feed.xml": [
+      "user1@mail.com",
+      "user2@mail.com"
+    ],
+
+    "http://site2.fr/feed.xml": [
+      "user1@mail.com",
+      "user3@mail.com"
+    ]
+
+  },
+
+
+  // index where primary keys are subscribers' email and
+  // data is a list of feed URL
+  // (same data as above but arranged for an efficient reverse lookup)
+  "feedsPerSubscribers": {
+    "user1@mail.com": [
+      "http://site1.com/feed.xml",
+      "http://site2.fr/feed.xml"
+    ],
+
+    "user2@mail.com": [
+      "http://site1.com/feed.xml"
+    ],
+
+    "user3@mail.com": [
+      "http://site2.com/feed.xml"
+    ]
+  }
+
+
+  // subscription data. The same data as the two indexing above
+  // can be found here, in a more storage efficient way but in a less
+  // performance-efficience lookup.
+  "subscriptions": [
+    {
+      "feed": "http://site1.com/feed.xml",
+      "email": "user1@mail.com",
+      "date": "2011-10-05T14:48:00.000Z",
+      "active": true
+    },
+
+    {
+      "feed": "http://site2.com/feed.xml",
+      "email": "user1@mail.com",
+      "date": "2011-10-05T14:48:00.000Z",
+      "active": true
+    },
+
+    {
+      "feed": "http://site1.com/feed.xml",
+      "email": "user2@mail.com",
+      "date": "2011-10-05T14:48:00.000Z",
+      "active": true
+    },
+
+    {
+      "feed": "http://site2.com/feed.xml",
+      "email": "user3@mail.com",
+      "date": "2011-10-05T14:48:00.000Z",
+      "active": true
+    }
+  ]
+
+}
